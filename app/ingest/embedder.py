@@ -21,9 +21,9 @@ def embed_chunks():
     chunk_dict = chunk_content()
     embed_dict = {}
 
-    for key in chunk_dict.keys:
+    for key in chunk_dict.keys():
         embedding = generate_embeddings(chunk_dict[key]["chunk"])
-        embed_dict[key] = {"file_name" : chunk_dict[key]["file"], "file_id" : key, "chunk" : chunk_dict[key]["chunk"], "embedding" : embedding}
+        embed_dict[key] = {"file_name" : chunk_dict[key]["file_name"], "file_id" : chunk_dict[key]["file_id"], "chunk" : chunk_dict[key]["chunk"], "embedding" : embedding}
     
     return embed_dict
         

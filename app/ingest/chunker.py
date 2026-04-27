@@ -9,7 +9,7 @@ def chunk_content():
     )
     file_dict = load_files()
     ind = 0
-    for key in file_dict.keys:
+    for key in file_dict.keys():
         chunks = text_splitter.split_text(file_dict[key]["content"])
         for chunk in chunks:
             chunk_dict[ind] = {"file_name" : file_dict[key]["file"], "file_id" : key, "chunk" : chunk}

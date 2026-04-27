@@ -1,3 +1,5 @@
 .env
 requirements.txt
 logs
+chroma_db
+chroma
