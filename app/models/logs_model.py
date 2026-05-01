@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 class Base(BaseModel):
     pass
@@ -6,6 +7,6 @@ class Base(BaseModel):
 class Logs(Base):
     query : str
     answer : str
-    chunk_text : str
-    chunk_score : float
+    chunks_dict : List
     model : str
+    grounding_check : bool

@@ -3,6 +3,7 @@ from ollama import chat
 from app.prompt.prompt_builder import build_prompt
 from app.models.llm_models import RAGResponse
 from app.models.logs_model import Logs
+from app.llm.control_layer import grouding_check
 from pathlib import Path
 import json
 
@@ -25,10 +26,11 @@ def generate_response(inp : str, n : int):
     
     return RAGResponse(**res)
 
-def log_llm_response(inp : RAGResponse):
+def log_llm_response(inp : RAGResponse, check : bool):
     base_dir = Path(__file__).resolve().parent.parent
     file_path = base_dir / "logger" / "logs.json"
-    dict = {"query" : RAGResponse.query, "answer" : RAGResponse.answer, "chunk_text" : RAGResponse.chunk_retrieved[0].text , "chunk_score" : RAGResponse.chunk_retrieved[0].similarity_score , "model" : RAGResponse.model_used}
+    
+    dict = {"query" : inp.query, "answer" : inp.answer, "chunks_dict" : inp.chunk_retrieved , "model" : inp.model_used, "grounding_check" : check}
     res = Logs(**dict)
     json_res = res.model_dump_json()
     with open(file_path,'w') as file:
@@ -41,7 +43,10 @@ if __name__ == "__main__":
     inp = input("Give your query here : ")
     n = 4
     
-    
     res = generate_response(inp,n)
-    log_llm_response(res)
-    print(res)
+    check = grouding_check(res)
+    if check == False:
+        print("I am here")
+        res.answer = "I don't have an answer"
+    log_llm_response(res , check)
+    print(res.answer)

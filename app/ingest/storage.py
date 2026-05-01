@@ -7,7 +7,7 @@ import numpy as np
 path1 = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/chroma_db")
 
 client = PersistentClient(path = path1)
-collection = client.get_or_create_collection(name="AgentCore_Collection")
+collection = client.get_or_create_collection(name="AgentCore_Collection", metadata={"hnsw:space": "cosine"})
 
 def store_embeddings():
     embed_dict = embed_chunks()
