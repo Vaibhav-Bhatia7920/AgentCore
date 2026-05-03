@@ -8,7 +8,7 @@ from pathlib import Path
 import json
 
 
-def generate_response(inp : str, n : int):
+def generate_response(inp : str, n : int = 4):
     prompt, chunks = build_prompt(inp, n)
     response = chat(
         model='mistral:7b',
@@ -36,7 +36,7 @@ def log_llm_response(inp : RAGResponse, check : bool):
     with open(file_path,'w') as file:
         json.dump(json_res, file, indent = 4)
 
-
+    return res
 
 
 if __name__ == "__main__":

@@ -11,3 +11,4 @@ class RAGResponse(Base):
     prompt_given : str
     model_used : str
     chunk_retrieved : List[ChunkContent]
+    

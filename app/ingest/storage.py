@@ -14,12 +14,19 @@ def store_embeddings():
     
     for key in embed_dict.keys():
         main_dict = embed_dict[key]
+        file_name = main_dict["file_name"]
+        collection.delete(where={"file_name": file_name})
+
+    for key in embed_dict.keys():
+        main_dict = embed_dict[key]
         embedding = np.array(main_dict["embedding"])
 
         chunk = main_dict["chunk"]
+        # print("Chunk : ", chunk , "File Name : ", main_dict["file_name"])
         file_name = main_dict["file_name"]
         file_id = main_dict["file_id"]
-    
+
+        
         collection.upsert(
             embeddings= [embedding[0]],
             documents= [chunk],
