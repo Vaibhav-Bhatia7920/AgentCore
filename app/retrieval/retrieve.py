@@ -23,7 +23,6 @@ def normalize_query(query : str):
 
 def top_chunks(query : str, number : int):
     query = normalize_query(query)
-    print(query)
     query_embedding = generate_embeddings(query)
     file_name = ""
     score = 0

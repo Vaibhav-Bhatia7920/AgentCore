@@ -10,3 +10,5 @@ class Logs(Base):
     chunks_dict : List
     model : str
     grounding_check : bool
+    timestamp : str
+    id : str
