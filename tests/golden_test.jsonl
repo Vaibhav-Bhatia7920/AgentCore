@@ -1,0 +1,85 @@
+[
+  {
+    "question": "What is eaten during Holi?",
+    "expected_source": "text1.txt"
+  },
+  {
+    "question": "What food is prepared during the festival of colors?",
+    "expected_source": "text1.txt"
+  },
+  {
+    "question": "Which sweets are mentioned in Holi celebrations?",
+    "expected_source": "text1.txt"
+  },
+  {
+    "question": "What is cooked in kitchens during Holi?",
+    "expected_source": "text1.txt"
+  },
+  {
+    "question": "During which festival is Holika Dahan performed?",
+    "expected_source": "text1.txt"
+  },
+
+  {
+    "question": "What is the significance of Diwali?",
+    "expected_source": "text2.txt"
+  },
+  {
+    "question": "Why is Diwali celebrated?",
+    "expected_source": "text2.txt"
+  },
+  {
+    "question": "What does the festival of lights represent?",
+    "expected_source": "text2.txt"
+  },
+  {
+    "question": "Which festival is known as the festival of lights?",
+    "expected_source": "text2.txt"
+  },
+  {
+    "question": "What is associated with Diwali celebrations?",
+    "expected_source": "text2.txt"
+  },
+
+  {
+    "question": "What is the crop festival in Punjab called?",
+    "expected_source": "text3.txt"
+  },
+  {
+    "question": "Which festival marks the harvest season in Punjab?",
+    "expected_source": "text3.txt"
+  },
+  {
+    "question": "What festival is celebrated with bonfires in Punjab?",
+    "expected_source": "text3.txt"
+  },
+  {
+    "question": "What is celebrated at the end of winter in Punjab?",
+    "expected_source": "text3.txt"
+  },
+  {
+    "question": "Which festival is associated with farmers and crops in Punjab?",
+    "expected_source": "text3.txt"
+  },
+
+  {
+    "question": "What is the capital of France?",
+    "expected_source": null
+  },
+  {
+    "question": "Who is the CEO of Google?",
+    "expected_source": null
+  },
+  {
+    "question": "What is eaten during Christmas?",
+    "expected_source": null
+  },
+  {
+    "question": "What is the population of India?",
+    "expected_source": null
+  },
+  {
+    "question": "Who invented the telephone?",
+    "expected_source": null
+  }
+]

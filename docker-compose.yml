@@ -1,0 +1,19 @@
+services:
+  db:
+    image: chromadb/chroma:latest
+    volumes:
+      - chroma_db:/data
+
+  agent-core:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+
+volumes:
+  chroma_db:

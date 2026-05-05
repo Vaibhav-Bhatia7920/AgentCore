@@ -40,6 +40,19 @@ def log_llm_response(inp : RAGResponse, check : bool):
 
     return res
 
+def log_llm_response2(inp : RAGResponse, check : bool):
+    base_dir = Path(__file__).resolve().parent.parent
+    file_path = base_dir / "logger" / "golden_dataset_logs.jsonl"
+    
+    timestamp = datetime.now(timezone.utc).isoformat(timespec='milliseconds')
+    dict = {"query" : inp.query, "answer" : inp.answer, "chunks_dict" : inp.chunk_retrieved , "model" : inp.model_used, "grounding_check" : check, "timestamp" : timestamp, "id" : timestamp}
+    res = Logs(**dict)
+    json_res = res.model_dump_json()
+    with open(file_path,'a') as file:
+        file.write(json.dumps(json_res) + "\n")
+
+    return res
+
 
 if __name__ == "__main__":
     inp = input("Give your query here : ")

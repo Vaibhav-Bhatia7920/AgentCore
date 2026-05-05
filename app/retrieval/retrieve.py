@@ -38,7 +38,7 @@ def top_chunks(query : str, number : int):
             file_name = key
     
    
-    count = collection.get(where={"file_name": file_name})
+    
    
     results = collection.query(query_embeddings= query_embedding, n_results=number, where={"file_name" : file_name})
     res_dict = []

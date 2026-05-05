@@ -6,6 +6,7 @@ from app.models.llm_models import RAGResponse
 
 
 def grouding_check(query : str, data : str):
+    print(f"Query is : {query}")
     kw_extractor = yake.KeywordExtractor()
     
     keywords = kw_extractor.extract_keywords(query)
@@ -45,7 +46,7 @@ def llm_grounding_check(llm_response : RAGResponse):
     answer, chunk_text = process_llm_response(llm_response)
     score = grouding_check(answer, chunk_text)
     print(f"Grounding score is : {score}")
-    if score > 0.85:
+    if score > 0.75:
         return True
     else:
         return False

@@ -6,3 +6,4 @@ chroma
 .venv
 data
 retrieval_notes.md
+__pycache__
