@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from app.pipeline import complete_rag_flow
 from app.llm.llm import generate_response
+from app.pipeline import session_flow, get_new_session_id
+from app.db.db_ops import query_session_conversation
 import json
 from collections import deque
 from pathlib import Path
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
 app = FastAPI()
 
@@ -31,9 +35,18 @@ def get_tail_traces1(limit : int):
     return data
 
 @app.get("/ask")
-async def ask_model(query : str):
-    _, result = complete_rag_flow(query)
-    return result
+async def ask_model(query : str, session_id : int = None):
+    if session_id == None:
+        id = session_flow(get_new_session_id(), query)
+    else:
+        id = session_flow(session_id, query)
+    convo = query_session_conversation(id)
+    print(convo)
+        # You can implement session-based logic here if needed
+    
+    return {"session_id" : id}
+    # _, result = complete_rag_flow(query)
+    # return result
 
 @app.get("/health")
 async def health_check():

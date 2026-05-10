@@ -6,8 +6,24 @@ from app.models.logs_model import Logs
 from app.llm.control_layer import grouding_check
 from pathlib import Path
 from datetime import datetime, timezone
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
 import json
 
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
+
+def make_openai_api_call(inp : str):
+    response = client.chat.completions.create(
+        model="gpt-5.5-mini",
+        messages=[
+            {"role" : "system" , "content" : "You are a helpful assistant."},
+            {"role" : "user" , "content" : inp}
+        ]
+    )
+    return response.choices[0].message.content
 
 def generate_response(inp : str, n : int = 4):
     prompt, chunks = build_prompt(inp, n)
