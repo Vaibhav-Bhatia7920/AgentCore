@@ -14,6 +14,18 @@ services:
       - db
     environment:
       - OLLAMA_HOST=http://host.docker.internal:11434
+  
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: agentcore_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   chroma_db:
+  postgres_data:

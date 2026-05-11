@@ -24,4 +24,5 @@ class ShortTermMemory(Base):
 
 class LongTermMemory(Base):
     __tablename__ = "long_term_memory"
-    summaries : Mapped[list[dict]] = mapped_column(JSON, default=list)
+    summaries : Mapped[dict] = mapped_column(JSON, default=dict)
+    session_id : Mapped[int] = mapped_column(Integer)

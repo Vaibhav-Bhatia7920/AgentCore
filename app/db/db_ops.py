@@ -71,11 +71,21 @@ def update_long_term_memory(session_id: int):
     session = db_session.query(Session).filter(Session.id == session_id).first()
     if session:
         info_dict = extract_important_info(session.chat_conversation)
-    memory = LongTermMemory(summaries=[info_dict])
+    memory = LongTermMemory(summaries=info_dict, session_id=session_id)
     db_session.add(memory)
     db_session.commit()
     db_session.close()
-    
+
+def get_long_term_memory():
+    db_session = SessionLocal()
+    memories = db_session.query(LongTermMemory).all()
+    facts = ""
+    for memory in memories:
+        for key, value in memory.summaries.items():
+            facts += f"{key}: {value}\n"
+    db_session.close()
+    return facts
+
 def query_session_conversation(session_id: int):
     db_session = SessionLocal()
     session = db_session.query(Session).filter(Session.id == session_id).first()

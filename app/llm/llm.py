@@ -25,8 +25,8 @@ def make_openai_api_call(inp : str):
     )
     return response.choices[0].message.content
 
-def generate_response(inp : str, n : int = 4):
-    prompt, chunks = build_prompt(inp, n)
+def generate_response(inp : str, n : int = 4, session_id : int = None):
+    prompt, chunks = build_prompt(inp, n, session_id)
     response = chat(
         model='mistral:7b',
         messages=[

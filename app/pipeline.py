@@ -53,7 +53,7 @@ def get_new_session_id():
 def session_flow(session_id: int, query : str, number : int = 4):
     id = session_id
     while True:
-        res = generate_response(query, number)
+        res = generate_response(query, number, session_id=id)
         print(f"Agent's response : {res.answer}")
         add_message(id, "user", query, None)
         add_message(id, "agent", res.answer, None)
