@@ -25,4 +25,4 @@ class ShortTermMemory(Base):
 class LongTermMemory(Base):
     __tablename__ = "long_term_memory"
     summaries : Mapped[dict] = mapped_column(JSON, default=dict)
-    session_id : Mapped[int] = mapped_column(Integer)
+    session_id : Mapped[int] = mapped_column(Integer, primary_key=True)

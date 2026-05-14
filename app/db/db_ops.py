@@ -3,11 +3,20 @@ import json
 from app.db.orm_models import Session, Message, ShortTermMemory, LongTermMemory, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.llm.llm import make_openai_api_call
+from app.llm.llm_ops import make_ollama_call
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
+
+db_password = os.getenv("POSTGRES_PASSWORD")
+db_user = "postgres"
+db_name = "agentcore_db"
+# Default Postgres port is 5432
+db_host = "localhost"
 
 
-
-engine = create_engine('sqlite:///agent_core.db')
+engine = create_engine(f'postgresql://{db_user}:{db_password}@{db_host}/{db_name}')
 SessionLocal = sessionmaker(bind=engine)
 
 def init_db():
@@ -27,6 +36,13 @@ def initiate_session(chat_conversation: list[dict]):
     db_session.refresh(session)
     db_session.close()
     return session.id
+
+def initiate_long_term_memory(session_id: int, summaries: dict):
+    db_session = SessionLocal()
+    memory = LongTermMemory(summaries=summaries, session_id=session_id)
+    db_session.add(memory)
+    db_session.commit()
+    db_session.close()
 
 def make_conversation_string(conversation : list[dict]):
     convo_str = ""
@@ -48,9 +64,11 @@ def get_last_n_messages(session_id: int, n: int):
     db_session = SessionLocal()
     session = db_session.query(Session).filter(Session.id == session_id).first()
     db_session.close()
+    print("Session , chat_conversation: ", session.chat_conversation)
     if session:
         convo = ""
         for message in session.chat_conversation[-n:]:
+            print("Message : ", message)
             convo += f"{message['author']} : {message['content']} \n"
         return convo
     else:
@@ -59,7 +77,7 @@ def get_last_n_messages(session_id: int, n: int):
 def extract_important_info(conversation : list[dict]):
     convo_str = make_conversation_string(conversation)
     prompt = f"Extract important information from the following conversation : {convo_str} \n Important information should be in the form of key value pairs, where key is the topic and value is the information related to that topic. If there is no important information, return an empty dictionary."
-    response = make_openai_api_call(prompt)
+    response = make_ollama_call(prompt)
     try:
         info_dict = json.loads(response)
     except:
@@ -71,7 +89,11 @@ def update_long_term_memory(session_id: int):
     session = db_session.query(Session).filter(Session.id == session_id).first()
     if session:
         info_dict = extract_important_info(session.chat_conversation)
-    memory = LongTermMemory(summaries=info_dict, session_id=session_id)
+    if db_session.query(LongTermMemory).filter(LongTermMemory.session_id == session_id).first():
+        memory = db_session.query(LongTermMemory).filter(LongTermMemory.session_id == session_id).first()
+        memory.summaries = info_dict
+    else:   
+        memory = LongTermMemory(summaries=info_dict, session_id=session_id)
     db_session.add(memory)
     db_session.commit()
     db_session.close()
