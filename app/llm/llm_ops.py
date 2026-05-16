@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from ollama import chat
 
+
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()

@@ -4,10 +4,13 @@ from app.llm.llm import log_llm_response
 from app.llm.llm import log_llm_response2
 from app.llm.trace import log_tracing
 from app.llm.mock_llm import mock_generate_response
+from app.agent.tools import ollama_tool_call_parallel
+from app.agent.trace_logger import log_agent_trace
 from app.db.orm_models import Session, Message, ShortTermMemory, LongTermMemory, Base
 from app.db.db_ops import init_db, get_db_session, initiate_session, add_message, update_long_term_memory, initiate_long_term_memory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 import json
 from pathlib import Path
 import os
@@ -76,6 +79,10 @@ def session_flow(query : str, number : int = 4, session_id : int = None):
     update_long_term_memory(id)
     return id
 
+def agent_flow(query : str):
+    res = generate_response(query, 4)
+    print(f"Agent's response : {res.answer}")
+    return res.answer
 
 if __name__ == "__main__":
     n = 4
