@@ -8,6 +8,7 @@ class Base(BaseModel):
 class ToolCall(Base):
     tool_name : str
     arguments : dict
+    
 
 class AgentStep(Base):
     thought : str
