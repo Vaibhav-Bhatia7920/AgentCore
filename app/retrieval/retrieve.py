@@ -34,9 +34,7 @@ def top_chunks_for_agent_file(query : str, file_name : str, number : int):
     return results['documents'][0]
 
 def top_chunks_for_agent_global(query : str, number : int):
-    query_embedding = preoptimize_query(query)
-    results = collection.query(query_embeddings= query_embedding, n_results=number)
-    return results['documents'][0]
+    return top_chunks_with_reranking(query, number)
 
 def top_chunks(query : str, number : int):
     query = normalize_query(query)
@@ -68,13 +66,10 @@ def top_chunks(query : str, number : int):
     return res_dict
 
 def top_chunks_with_reranking(query: str, number: int):
-    # 1. Fetch more chunks than needed from the vector database
     chunks = top_chunks(query, number * 3)
     scored_chunks = []
 
-    # 2. Score each chunk individually
     for chunk in chunks:
-        # A strictly formatted template for a cross-encoder/reranker
         prompt = (
             f"System: Rate the relevance of the document to the query on a scale from 0 to 10.\n"
             f"Query: {query}\n"
@@ -87,17 +82,15 @@ def top_chunks_with_reranking(query: str, number: int):
                 model="dengcao/Qwen3-Reranker-4B:Q5_K_M",
                 prompt=prompt,
                 options={
-                    "temperature": 0.0,       # Strict determinism
-                    "num_predict": 3,         # We only need a short number/token
-                    "stop": ["\n"]            # Stop immediately after the line
+                    "temperature": 0.0,       
+                    "num_predict": 3,         
+                    "stop": ["\n"]           
                 }
             )
             
-            # Clean the output to extract the numeric score
             cleaned_response = response['response'].strip()
             print(f"Chunk text snippet: {chunk.text[:30]}... -> Model Response: {cleaned_response}")
             
-            # Try to parse out the number; fallback to 0 if it glitches
             score = float(''.join(c for c in cleaned_response if c.isdigit() or c == '.'))
             scored_chunks.append((score, chunk))
             
@@ -105,10 +98,8 @@ def top_chunks_with_reranking(query: str, number: int):
             print(f"Skipping a glitched chunk: {e}")
             scored_chunks.append((0.0, chunk))
 
-    # 3. Sort chunks by score in descending order (highest score first)
     scored_chunks.sort(key=lambda x: x[0], reverse=True)
 
-    # 4. Return the top requested number of chunks
     top_results = [chunk for score, chunk in scored_chunks[:number]]
     return top_results
 

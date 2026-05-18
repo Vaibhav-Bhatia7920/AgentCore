@@ -6,17 +6,16 @@ from app.models.agent_models import AgentTrace, AgentStep, ToolCall
 from app.agent.trace_logger import log_agent_trace
 from app.retrieval.retrieve import top_chunks_for_agent_file, top_chunks_for_agent_global
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+agent_logic_model = os.getenv("agent_logic_model")
+summary_model = os.getenv("rag_response_model")
 
 path = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/chroma_db")
 client = PersistentClient(path)
 collection = client.get_or_create_collection(name="AgentCore_Collection")
 
-def summarize_file(file_path: str):
-    with open(file_path, 'r') as file:
-        content = file.read()
-    
-    summary = make_ollama_call(f"Summarize the following content: {content}", model="mistral:7b")
-    return summary
 
 def get_top_chunks_file(query: str, file_name: str, top_k: int = 3):
     """
@@ -51,7 +50,6 @@ def divide(n1 : int, n2 : int):
     return n1 / n2
 
 availaible_tools = {
-    "summarize_file" : summarize_file,
     "list_files_in_directory" : list_files_in_directory,
     "get_the_temperature_of_a_city" : get_the_temperature_of_a_city,
     "get_top_chunks_file" : get_top_chunks_file,
@@ -62,19 +60,19 @@ availaible_tools = {
     "divide" : divide
 }
 
-def ollama_tool_call(tool_list : list , query : str):
-    messages = [{"role" : "user", "content" : query}]
-    response = chat(model="qwen3:8b", messages=messages, tools=tool_list, think=True)
+# def ollama_tool_call(tool_list : list , query : str):
+#     messages = [{"role" : "user", "content" : query}]
+#     response = chat(model=agent_logic_model, messages=messages, tools=tool_list, think=True)
 
-    messages.append(response.message)
-    if response.message.tool_calls:
-        call = response.message.tool_calls[0]
-        result = summarize_file(**call.function.arguments)
+#     messages.append(response.message)
+#     if response.message.tool_calls:
+#         call = response.message.tool_calls[0]
+#         result = summarize_file(**call.function.arguments)
 
-        messages.append({"role" : "tool", "tool_name" : call.function.name, "content" : str(result)})
+#         messages.append({"role" : "tool", "tool_name" : call.function.name, "content" : str(result)})
 
-        final_response = chat(model="qwen3:8b", messages=messages, tools=tool_list, think=True)
-        print(final_response.message.content)
+#         final_response = chat(model=agent_logic_model, messages=messages, tools=tool_list, think=True)
+#         print(final_response.message.content)
 
 
 def ollama_tool_call_parallel(tool_list : list , query : str):
@@ -82,7 +80,7 @@ def ollama_tool_call_parallel(tool_list : list , query : str):
     agent_trace = AgentTrace(query = query, steps = [], response = "")
 
     while True: 
-        response = chat(model="qwen3:8b", messages=messages, tools=tool_list, think=True)
+        response = chat(model=agent_logic_model, messages=messages, tools=tool_list, think=True)
         messages.append(response.message)
         print(response.message)
         if response.message.tool_calls:
@@ -105,7 +103,7 @@ def ollama_tool_call_parallel(tool_list : list , query : str):
     return agent_trace
 
 if __name__ == "__main__":
-    tool_list = [summarize_file, list_files_in_directory, get_the_temperature_of_a_city, edit_file, add, multiply, divide, get_top_chunks_file, get_top_chunks_global]
+    tool_list = [list_files_in_directory, get_the_temperature_of_a_city, edit_file, add, multiply, divide, get_top_chunks_file, get_top_chunks_global]
     query = input("Enter your query: ")
     agent_trace = ollama_tool_call_parallel(tool_list, query)
     log_agent_trace(agent_trace)

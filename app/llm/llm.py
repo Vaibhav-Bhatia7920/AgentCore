@@ -7,11 +7,16 @@ from app.llm.control_layer import grouding_check
 from pathlib import Path
 from datetime import datetime, timezone
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+rag_response_model = os.getenv("rag_response_model")
 
 def generate_response(inp : str, n : int = 4, session_id : int = None):
     prompt, chunks = build_prompt(inp, n, session_id)
     response = chat(
-        model='mistral:7b',
+        model=rag_response_model,
         messages=[
             {'role' : 'system' , 'content' : prompt},
             {'role' : 'user' , 'content' : inp}]
