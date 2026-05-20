@@ -3,10 +3,20 @@ from chromadb import PersistentClient
 from pathlib import Path
 from app.ingest.embedder import embed_chunks
 import numpy as np
+import os
+
 
 path1 = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/chroma_db")
 
-client = PersistentClient(path = path1)
+is_docker = os.path.exists("/.dockerenv")
+if is_docker:
+    CHROMA_HOST = os.getenv("CHROMA_HOST", "db")
+    CHROMA_PORT = int(os.getenv("CHROMA_PORT", "8000"))
+
+    client = chromadb.HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+else:
+    client = PersistentClient(path = path1)
+
 collection = client.get_or_create_collection(name="AgentCore_Collection", metadata={"hnsw:space": "cosine"})
 
 def store_embeddings():

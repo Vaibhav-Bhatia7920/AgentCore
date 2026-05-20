@@ -1,5 +1,7 @@
 from itertools import count
+import chromadb
 import ollama
+import os   
 from chromadb import PersistentClient
 from pathlib import Path
 from app.ingest.embedder import generate_embeddings
@@ -9,10 +11,18 @@ from app.ingest.embedder import cosine_similarity, file_level_embeddings
 import numpy as np
 from app.llm.control_layer import grouding_check
 
-path = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/chroma_db")
-client = PersistentClient(path)
+path1 = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/chroma_db")
 
-collection = client.get_or_create_collection(name="AgentCore_Collection")
+is_docker = os.path.exists("/.dockerenv")
+if is_docker:
+    CHROMA_HOST = os.getenv("CHROMA_HOST", "db")
+    CHROMA_PORT = int(os.getenv("CHROMA_PORT", "8000"))
+
+    client = chromadb.HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+else:
+    client = PersistentClient(path = path1)
+
+collection = client.get_or_create_collection(name="AgentCore_Collection", metadata={"hnsw:space": "cosine"})
 
 def normalize_query(query : str):
     res = query.strip()

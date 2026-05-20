@@ -1,9 +1,13 @@
+import os
 from pathlib import Path
-directory = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/data")
 ## Also can use the sort of relative path using Path library and getting current file path using __file__,
 ## then .parent to go to the desired directory
 
-
+is_docker = os.path.exists("/.dockerenv")
+if is_docker:
+    directory = Path("/app/data")
+else:
+    directory = Path("/Users/vaibhav/Documents/DevBase/ml-60/Fork/AgentCore/data")
 def load_files():
     file_contents = {}
     ind = 0

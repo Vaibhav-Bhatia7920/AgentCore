@@ -38,6 +38,11 @@ def edit_file(file_path: str, new_content: str):
         file.write(new_content)
     return f"File at {file_path} has been updated."
 
+# def group_files_by_topics(directory_path: str):
+#     files = os.listdir(directory_path)
+#     topic_groups = {}
+    
+
 def add(n1 : int, n2 : int):
     return n1 + n2
 
